@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>User Details</title>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+            namespace = '/user_details';
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+            socket.on('bot_response', function(msg) {
+                $('#log').append('<br>' + '<span style="color:red"><b>Bot</b></span>: ' + $('<div/>').text(msg.data).html());
+                var str = $('.form_question').hide();
+                $('#{0}'.replace('{0}', msg.display)).show();
+            });
+            socket.on('user_response', function(msg) {
+                console.log(msg.error);
+                if (msg.error) {
+                    var str = $('.form_question').hide();
+                    $('#{0}'.replace('{0}', msg.display)).show();
+                    alert(msg.error_message);
+                } else {
+                    $('#log').append('<br>' + '<span style="color:green"><b>User</b></span>: ' + $('<div/>').text(msg.data).html());
+                }
+            });
+
+            $('form#users_name').submit(function(event) {
+                socket.emit('users_name', {data: $('#username').val()});
+                return false;
+            });
+            $('form#users_gender').submit(function(event) {
+                socket.emit('users_gender', {data: $('input[name=gender]:checked').val()});
+                return false;
+            });
+            $('form#users_date_of_birth').submit(function(event) {
+                socket.emit('users_date_of_birth', {data: $('#ymd').val()});
+                return false;
+            });
+            $('form#user_is_smoker').submit(function(event) {
+                socket.emit('user_is_smoker', {data: $('input[name=smoker]:checked').val()});
+                return false;
+            });
+            $('form#show_details').submit(function(event) {
+                console.log('form#show_details');
+                socket.emit('show_details');
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Programming Challenge</h1>
+<div id="log"></div>
+<form style="display:none;" class="form_question" id="users_name" method="POST" action='#'>
+    <input type="text" name="username" id="username" placeholder="Name">
+    <input type="submit" value="Send">
+</form>
+<form style="display:none;" class="form_question" id="users_gender" method="POST" action='#'>
+    <input type="radio" name="gender" value="Male" checked> Male<br>
+    <input type="radio" name="gender" value="Female"> Female<br>
+    <input type="submit" value="Send">
+</form>
+<form style="display:none;" class="form_question" id="users_date_of_birth" method="POST" action='#'>
+    <input type="text" name="ymd" id="ymd" placeholder="dd-mm-yyyy">
+    <input type="submit" value="Send">
+</form>
+<form style="display:none;" class="form_question" id="user_is_smoker" method="POST" action='#'>
+    <input type="radio" name="smoker" value="Yes" checked> Yes<br>
+    <input type="radio" name="smoker" value="No"> No<br>
+    <input type="submit" value="Send">
+</form>
+<form style="display:none;" class="form_question" id="show_details" method="POST" action="#">
+    <input type="submit" value="Done">
+</form>
+
+</body>
+</html>
