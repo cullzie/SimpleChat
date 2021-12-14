@@ -4,7 +4,7 @@ blinker==1.4
 cffi==1.10.0
 click==6.7
 cssselect==1.0.1
-Flask==0.12
+Flask==1.0
 Flask-Login==0.3.2
 Flask-LoginManager==1.1.4
 Flask-Mail==0.9.1
